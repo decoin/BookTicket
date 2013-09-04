@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="datasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/bookticket"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="123"></property>
+		<property name="maxActive" value="100"></property>
+		<property name="maxIdle" value="30"></property>
+		<property name="maxWait" value="500"></property>
+		<property name="defaultAutoCommit" value="true"></property>	
+	</bean>
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="datasource"></property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialet">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>com/online/ticket/bean/Admin.hbm.xml</value>
+				<value>com/online/ticket/bean/User.hbm.xml</value>
+				<value>com/online/ticket/bean/Flight.hbm.xml</value>
+				<value>com/online/ticket/bean/Orders.hbm.xml</value>
+				<value>com/online/ticket/bean/Orderlist.hbm.xml</value>
+			</list>
+		</property>	
+	</bean>
+	<!-- 管理员的sessionFactory -->
+	<bean id="admindao" class="com.online.ticket.dao.impl.AdminDAOImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	<bean id="adminservice" class="com.online.ticket.service.impl.AdminServiceImpl">
+		<property name="admindao" ref="admindao"></property>
+	</bean>
+	<bean id="loginAdminAction" class="com.online.tickets.action.admin.LoginAdminAction" scope="prototype">
+		<property name="adminservice" ref="adminservice"></property>
+	</bean>
+	
+	
+	<!-- 用户的sessionFactory -->
+	<bean id="userDao" class="com.online.ticket.dao.impl.UserDAOImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>	
+	<bean id="userService" class="com.online.ticket.service.impl.UserServiceImpl">
+		<property name="userdao" ref="userDao"></property>
+	</bean>
+	<bean id="addUserAction" class="com.online.tickets.action.user.AddUserAction" scope="prototype">
+		<property name="userservice" ref="userService"></property> 
+	</bean>	
+	<bean id="listUserAction" class="com.online.tickets.action.user.QueryUserAction" scope="prototype">
+		<property name="userservice" ref="userService"></property>
+	</bean>	
+	<bean id="deleteUserAction" class="com.online.tickets.action.user.RemoveUserAction" scope="prototype">
+		<property name="userservice" ref="userService" ></property>
+	</bean>	
+	<bean id="updatePUserAction" class="com.online.tickets.action.user.UpdatePUserAction" scope="prototype">
+		<property name="userservice" ref="userService"></property>
+	</bean>	
+	<bean id="updateUserAction" class="com.online.tickets.action.user.UpdateUserAction" scope="prototype">
+		<property name="userservice" ref="userService"></property>
+	</bean>
+	<bean id="queryOUserAction" class="com.online.tickets.action.user.QueryOSUserAction" scope="prototype">
+		<property name="userservice" ref="userService"></property>
+	</bean>
+	<bean id="LoginUserAction" class="com.online.tickets.action.user.LoginUserAction" scope="prototype">
+		<property name="userservice" ref="userService"></property>
+	</bean>
+	
+	<!-- 航班的sessionFactory -->
+	<bean id="flightDao" class="com.online.ticket.dao.impl.FlightDAOImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	<bean id="flightservice" class="com.online.ticket.service.impl.FlightServiceImpl">
+		<property name="flightdao" ref="flightDao"></property>
+	</bean>
+	<bean id="addFlightAction" class="com.online.tickets.action.flight.AddFlightAction" scope="prototype">
+		<property name="flightservice" ref="flightservice"></property>
+	</bean>
+	<bean id="queryFlightAction" class="com.online.tickets.action.flight.QueryFlightAction" scope="prototype">
+		<property name="flightservice" ref="flightservice"></property>
+	</bean>
+	<bean id="deleteFlightAction" class="com.online.tickets.action.flight.DeleteFlightAction">
+		<property name="flightservice" ref="flightservice"></property>
+	</bean>
+	<bean id="updatePFlightAction" class="com.online.tickets.action.flight.UpdatePFlightAction">
+		<property name="flightservice" ref="flightservice"></property>
+	</bean>
+	<bean id="updateFlightAction" class="com.online.tickets.action.flight.UpdateFlightAction">
+		<property name="flightservice" ref="flightservice"></property>
+	</bean>
+	<bean id="querySFlightAction" class="com.online.tickets.action.flight.QuerySFlightAction">
+		<property name="flightservice" ref="flightservice"></property>
+	</bean>
+	
+	<!-- 订单管理 -->
+	<bean id="ordersdao" class="com.online.ticket.dao.impl.OrdersDAOImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	<bean id="ordersservice" class="com.online.ticket.service.impl.OrdersServiceImpl">
+		<property name="ordersdao" ref="ordersdao"></property>
+	</bean>
+	<bean id="countListAction" class="com.online.tickets.action.orders.CountListAction">
+		<property name="orderservice" ref="ordersservice"></property>
+		<property name="userservice" ref="userService"></property>
+		<property name="listservice" ref="orderlistservice"></property>
+		<property name="flightservice" ref="flightservice"></property>
+	</bean>
+	
+
+	<!-- 购物车 -->
+	<bean id="orderlistdao" class="com.online.ticket.dao.impl.OrderlistDAOImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	<bean id="orderlistservice" class="com.online.ticket.service.impl.OrderlistServiceImpl">
+		<property name="orderlistdao" ref="orderlistdao"></property>
+		<property name="flightdao" ref="flightDao"></property>
+	</bean>
+	<bean id="addOrderlistAction" class="com.online.tickets.action.orders.AddOrderlistAction">
+		<property name="listservice" ref="orderlistservice"></property>
+		<property name="flightservice" ref = "flightservice"></property>
+	</bean>
+	<bean id="orderlistAction" class="com.online.tickets.action.orders.OrdersListAction">
+		<property name="listservice" ref="orderlistservice"></property>
+	</bean>
+</beans>

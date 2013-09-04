@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE validators PUBLIC "-//OpenSymphony Group//XWork Validator 1.0.2//EN" 
+	"http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+
+<validators>
+	<field name="user.name">
+		<field-validator type="requiredstring">
+			<message>用户名不能为空!</message>
+		</field-validator>
+		<!--  
+		<field-validator type="regex">
+			<param name="expression"><![CDATA[(/w{4,25})]]></param>
+			<message>用户名只能是字母和数字，且长度必须在4到25之间</message>
+		</field-validator>
+		-->
+	</field>
+	
+	<field name="user.password">
+		<field-validator type="requiredstring">
+			<message>密码不能为空!</message>
+		</field-validator>
+		<!--  
+		<field-validator type="regex">
+			<param name="expression"><![CDATA[(/w{4,25})]]></param>
+			<message>密码只能是字母和数字，长度必须在4到25之间</message>
+		</field-validator>
+		-->
+	</field>
+	<!--  
+	<field name="user.repassword">
+		<field-validator type="fieldexpression">
+			<param name="expression">user.repassword.equals(user.password)></param>
+			<message>确认密码不能为空且必须和密码相同</message>
+		</field-validator>
+	</field>
+	-->
+	<!--  
+	<field name="user.cardId">
+		<field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[{18}]]></param>
+			<message>用户ID必须填写且长度为18位</message>
+		</field-validator>
+	</field>
+	-->
+	<field name="user.sex">
+		<field-validator type="requiredstring">
+			<message>性别不能为空!</message>
+		</field-validator>
+	</field>
+	
+	
+</validators>
